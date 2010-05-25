@@ -12,6 +12,7 @@
 		9F1EF39611ABE942002497B6 /* xmltok_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F1EF39111ABE942002497B6 /* xmltok_impl.c */; };
 		9F1EF39711ABE942002497B6 /* xmltok_ns.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F1EF39211ABE942002497B6 /* xmltok_ns.c */; };
 		9F1EF39811ABE942002497B6 /* xmltok.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F1EF39311ABE942002497B6 /* xmltok.c */; };
+		9F5CF42011AC6AF700FA9C9D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F5CF41F11AC6AF700FA9C9D /* AppDelegate.m */; };
 		9FA1229911A92B89003444D2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA1229811A92B89003444D2 /* libz.dylib */; };
 		9FA122FE11A92FE3003444D2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA1229811A92B89003444D2 /* libz.dylib */; };
 		9FA13A0A11AA755A003444D2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA13A0911AA755A003444D2 /* SystemConfiguration.framework */; };
@@ -31,7 +32,6 @@
 		9FFF03F711A819E500F1799C /* ExpatXMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFF03F511A819E500F1799C /* ExpatXMLParser.h */; };
 		9FFF03F811A819E500F1799C /* ExpatXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF03F611A819E500F1799C /* ExpatXMLParser.m */; };
 		9FFF040A11A81A3E00F1799C /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF040911A81A3E00F1799C /* MainWindow.xib */; };
-		9FFF042B11A81A9E00F1799C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF042A11A81A9E00F1799C /* AppDelegate.m */; };
 		9FFF070511A8373600F1799C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF070411A8373600F1799C /* main.m */; };
 		9FFF0CE211A8923500F1799C /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FFF0CE111A8923500F1799C /* CFNetwork.framework */; };
 		9FFF0CFD11A8929600F1799C /* libiPhoneExpat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libiPhoneExpat.a */; };
@@ -45,6 +45,7 @@
 		9F1EF39111ABE942002497B6 /* xmltok_impl.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; path = xmltok_impl.c; sourceTree = "<group>"; };
 		9F1EF39211ABE942002497B6 /* xmltok_ns.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; path = xmltok_ns.c; sourceTree = "<group>"; };
 		9F1EF39311ABE942002497B6 /* xmltok.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; path = xmltok.c; sourceTree = "<group>"; };
+		9F5CF41F11AC6AF700FA9C9D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		9FA1229811A92B89003444D2 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		9FA13A0911AA755A003444D2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		9FFF03C811A819CA00F1799C /* ascii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ascii.h; sourceTree = "<group>"; };
@@ -66,7 +67,6 @@
 		9FFF040211A81A2100F1799C /* iPhoneExpatTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iPhoneExpatTest-Info.plist"; sourceTree = "<group>"; };
 		9FFF040911A81A3E00F1799C /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		9FFF042911A81A9E00F1799C /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		9FFF042A11A81A9E00F1799C /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		9FFF070411A8373600F1799C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9FFF0CE111A8923500F1799C /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		AA747D9E0F9514B9006C5449 /* iPhoneExpat_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPhoneExpat_Prefix.pch; sourceTree = SOURCE_ROOT; };
@@ -195,7 +195,7 @@
 				9FFF040911A81A3E00F1799C /* MainWindow.xib */,
 				9FFF040211A81A2100F1799C /* iPhoneExpatTest-Info.plist */,
 				9FFF042911A81A9E00F1799C /* AppDelegate.h */,
-				9FFF042A11A81A9E00F1799C /* AppDelegate.m */,
+				9F5CF41F11AC6AF700FA9C9D /* AppDelegate.m */,
 				9FFF070411A8373600F1799C /* main.m */,
 			);
 			name = "Test App";
@@ -298,8 +298,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9FFF042B11A81A9E00F1799C /* AppDelegate.m in Sources */,
 				9FFF070511A8373600F1799C /* main.m in Sources */,
+				9F5CF42011AC6AF700FA9C9D /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

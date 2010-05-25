@@ -12,7 +12,8 @@
 #import <CFNetwork/CFNetwork.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-const int buffSize = 24024;
+const int buffSize = 1024;
+const XML_Char seperator = -1;
 
 @implementation ExpatXMLParser
 
@@ -43,42 +44,59 @@ startElementHandler(void *ud, const XML_Char *name, const XML_Char **atts)
 {	
 	
 	ExpatXMLParser * parserobj = (ExpatXMLParser*)ud;
-	NSString *elementName;
-	NSString *uri = nil;
-	NSString *qualifiedName = nil;
+	CFStringRef elementName;
+	CFStringRef uri = nil;
+	CFStringRef qualifiedName = nil;
+	CFArrayRef temp = nil;
 	
 	// Extract names
 	if(parserobj->shouldProcessNamespaces)
-	{
-		NSString *_name = [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name)) autorelease];
-		NSArray *temp = [_name componentsSeparatedByString:[NSString stringWithFormat:@"%c", -1]];
+	{		
+		CFStringRef _name = CFStringCreateWithCharactersNoCopy (kCFAllocatorDefault,(UniChar*)name, UniCharStrlen(name), kCFAllocatorNull);
 		
-		if([temp count] > 1)
-		{
-			uri = [temp objectAtIndex:0];
-			elementName = [temp objectAtIndex:1];
+		temp = CFStringCreateArrayBySeparatingStrings (kCFAllocatorDefault, _name, (*)parserobj->seperator);
+		
+		if(CFArrayGetCount(temp) > 1) {
+			uri = CFArrayGetValueAtIndex(temp, 0);
+			elementName = CFArrayGetValueAtIndex(temp, 1);
+		} else {
+			elementName = CFArrayGetValueAtIndex(temp, 0);
 		}
-		else
-			elementName = [temp objectAtIndex:0];
+
+		if (uri) CFRetain(uri);
+		if (elementName) CFRetain(elementName);
 		
 		// It's possible to have a default namespace, in which case a prefix may not have been declared
-		if([temp count] > 2)
-			qualifiedName = [NSString stringWithFormat:@"%@:%@", [temp objectAtIndex:2], elementName];
-		else
+		if(CFArrayGetCount(temp) > 2) {
+			qualifiedName = CFStringCreateWithFormat (kCFAllocatorDefault, NULL, (CFStringRef)@"%@:%@", CFArrayGetValueAtIndex(temp, 2), elementName);
+		} else {
 			qualifiedName = elementName;
+			CFRetain(qualifiedName);
+		}
+		
+		CFRelease(_name);
+		CFRelease(temp);
 	}
 	else
 	{
-		elementName = [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name)) autorelease];
+		elementName = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name), kCFAllocatorNull);
+	//	elementName = (id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name));
 	}
 
 	CFDictionaryRemoveAllValues((CFMutableDictionaryRef)parserobj->dict);
 	int i;
-	for(i=0; atts[i]; i+=2) {
+	for(i=0; atts[i]; i+=2) 
+	{
+		CFStringRef key = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, (UniChar*)atts[i+1], UniCharStrlen(atts[i]), kCFAllocatorNull);
+		CFStringRef value = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, (UniChar*)atts[i+1], UniCharStrlen(atts[i+1]), kCFAllocatorNull);
+
 		CFDictionaryAddValue ((CFMutableDictionaryRef)parserobj->dict,
-							  [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)atts[i], UniCharStrlen(atts[i])) autorelease],
-							  [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)atts[i+1], UniCharStrlen(atts[i+1])) autorelease]
+							  (id)key,
+							  (id)value
 							  );
+		
+		CFRelease(key);
+		CFRelease(value);
 	}
 			
 	if (parserobj->buffer) {
@@ -89,10 +107,16 @@ startElementHandler(void *ud, const XML_Char *name, const XML_Char **atts)
 	parserobj->buffer = CFStringCreateMutable(kCFAllocatorDefault, 0);
 	
 	[parserobj->delegate parser:parserobj
-				 didStartElement:elementName
-					namespaceURI:uri
-				   qualifiedName:qualifiedName
+				 didStartElement:(NSString*)elementName
+					namespaceURI:(NSString*)uri
+				   qualifiedName:(NSString*)qualifiedName
 					  attributes:(NSDictionary*)parserobj->dict];
+	
+	
+	if (qualifiedName) CFRelease(qualifiedName);
+	if (elementName) CFRelease(elementName);
+	if (uri) CFRelease(uri);
+
 }
 
 // Called when an element (tag) ends
@@ -101,16 +125,23 @@ endElementHandler(void *ud, const XML_Char *name)
 {
 	ExpatXMLParser * parserobj = (id)ud;
 	
-	NSString * elementName = [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name)) autorelease];
+	CFStringRef elementName = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name), kCFAllocatorNull);
+
+	//NSString * elementName = (id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name));
 	
-	[parserobj->delegate parser:parserobj foundCharacters:(NSString*)[(id)parserobj->buffer autorelease]];
+	[parserobj->delegate parser:parserobj foundCharacters:(NSString*)(id)parserobj->buffer];
 	 
 	[parserobj->delegate parser:parserobj
-				   didEndElement:elementName
+				   didEndElement:(NSString*)elementName
 				    namespaceURI:nil
 				   qualifiedName:nil];
+
+	CFRelease(elementName);
 	
-	parserobj->buffer = nil;
+	if (parserobj->buffer) {
+		CFRelease(parserobj->buffer);
+		parserobj->buffer = nil;
+	}
 }
 
 // Called when characters are encounted between elements (tags)
@@ -119,7 +150,11 @@ characterDataHandler(void *ud, const XML_Char *s, int len)
 {
 	ExpatXMLParser * parserobj = (id)ud;
 
-	if (s != nil && len > 0 && parserobj->buffer) {
+	if (s != nil && len > 0) {
+		if (parserobj->buffer == nil) {	
+			parserobj->buffer = CFStringCreateMutable(kCFAllocatorDefault, 0);
+		}
+		
 		CFStringAppendCharacters ((CFMutableStringRef)parserobj->buffer, (UniChar*)s, len);
 	}
 }
@@ -184,6 +219,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 	}
 	
 	CFRelease(dict);
+	CFRelease(seperator);
 	[delegate release];
 	[url release];
 	[error release];
@@ -248,6 +284,10 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 	
 	if (dict == nil)
 		dict = (CFMutableDictionaryRef)[[NSMutableDictionary alloc] initWithCapacity:20];
+	
+	if (seperator == nil)
+		seperator = CFStringCreateWithCharactersNoCopy (kCFAllocatorDefault,(UniChar*)&seperator,1,kCFAllocatorNull);
+
 	
 	// Initialize parser
 	if(shouldProcessNamespaces)
@@ -327,7 +367,8 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		unsigned have;
 		z_stream strm;
 		unsigned char in[buffSize];
-		unsigned char out[buffSize];
+		//unsigned char out[buffSize];
+		unsigned char * out;
 
 		while (true) {
 				//Read in the data from the CFStream
@@ -338,6 +379,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 					if (msgRespuesta) {
 						NSString * encodingdd = (NSString*)CFHTTPMessageCopyHeaderFieldValue (msgRespuesta, (CFStringRef) @"Content-Encoding");
 						if (encodingdd) {
+					
 							if ([encodingdd isEqualToString:@"gzip"]) {
 								gzipEncoded = YES;
 								
@@ -384,9 +426,16 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 						strm.next_in = in;
 					
 						do {
+							
+							out = XML_GetBuffer(parser, buffSize);
+							if (out == nil) {
+								[self errorHandler:XML_GetErrorCode(parser)];
+								break;
+							}
+							
 							strm.avail_out = buffSize;
 							strm.next_out = (Bytef*)out;
-
+							
 							ret = inflate(&strm, Z_SYNC_FLUSH);
 							assert(ret != Z_STREAM_ERROR); 
 							switch (ret) {
@@ -406,7 +455,8 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 							//Parse what we have so far
 							have = buffSize - strm.avail_out;
 
-							if(!XML_Parse(parser, (const char*)out, have, NO)) {
+							if(!XML_ParseBuffer(parser, have, NO)) {
+						//	if(!XML_Parse(parser, (const char*)out, have, NO)) {
 								[self errorHandler:XML_GetErrorCode(parser)];
 								break;
 							}

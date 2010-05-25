@@ -20,7 +20,7 @@
 					  @"http://www.slate.com/rss/",
 					  @"http://rssfeeds.usatoday.com/UsatodaycomBooks-TopStories",
 					  @"http://googleblog.blogspot.com/atom.xml",
-					  @"hhttp://api.flickr.com/services/feeds/groups_pool.gne?id=61057342@N00&lang=en-us&format=rss_200",
+					  @"http://api.flickr.com/services/feeds/groups_pool.gne?id=61057342@N00&lang=en-us&format=rss_200",
 					  @"http://phobos.apple.com/WebObjects/MZStore.woa/wpa/MRSS/topsongs/limit=25/rss.xml",
 					  @"http://www.readwriteweb.com/rss.xml",
 					  @"http://rssfeeds.usatoday.com/UsatodaycomNation-TopStories",
@@ -31,7 +31,7 @@
 	for (NSString * urlString in urls) {
 	
 		
-		/*timePrinted = NO;
+		timePrinted = NO;
 		
 		opened = 0;
 		closed = 0;
@@ -40,6 +40,7 @@
 		start = [[NSDate date] timeIntervalSince1970];
 		ExpatXMLParser * parser = [[ExpatXMLParser alloc] initWithContentsOfURL:[NSURL URLWithString:urlString]];
 		parser.delegate = self;
+		//[parser setShouldProcessNamespaces:YES];
 		[parser parse];
 		[parser release];
 		end = [[NSDate date] timeIntervalSince1970];
@@ -50,13 +51,11 @@
 		
 		NSLog(@"opened %d -- closed %d", opened, closed);
 		
-		
-		
 		urlString = [urlString stringByAppendingFormat:@"?=%d", arc4random()];
 		
-		NSLog(@"%@", urlString);*/
+		NSLog(@"%@", urlString);
 		
-		timePrinted = NO;
+		/*timePrinted = NO;
 		
 		opened = 0;
 		closed = 0;
@@ -65,6 +64,8 @@
 		start = [[NSDate date] timeIntervalSince1970];
 		NSXMLParser * parserns = [[NSXMLParser alloc] initWithContentsOfURL:[NSURL URLWithString:urlString]];
 		parserns.delegate = self;
+		
+		[parserns setShouldProcessNamespaces:YES];
 		[parserns parse];
 		[parserns release];
 		end = [[NSDate date] timeIntervalSince1970];
@@ -73,8 +74,7 @@
 		printf("Time Taken to Reach first element %f\n", firstElementTime-start);
 		printf("Total time %f\n", end-start);
 		
-		urlString = [urlString stringByAppendingFormat:@"?=%d", arc4random()];
-
+		urlString = [urlString stringByAppendingFormat:@"?=%d", arc4random()];*/
 
 		NSLog(@"opened %d -- closed %d", opened, closed);
 	}

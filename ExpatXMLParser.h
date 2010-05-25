@@ -36,6 +36,7 @@
 	XML_Parser parser;
 	NSURL * url;
 	NSError *error;
+	CFStringRef seperator;
 }
 
 - (id)initWithContentsOfURL:(NSURL *)url;
