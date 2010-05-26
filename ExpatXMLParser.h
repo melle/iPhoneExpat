@@ -30,16 +30,19 @@
 	BOOL shouldProcessNamespaces;
 	BOOL shouldReportNamespacePrefixes;
 	BOOL shouldResolveExternalEntities;
-	
+	BOOL _isDataParse;
 	CFMutableDictionaryRef dict;
 	CFMutableStringRef buffer;
 	XML_Parser parser;
 	NSURL * url;
 	NSError *error;
 	CFStringRef seperator;
+	NSData * data;
 }
 
 - (id)initWithContentsOfURL:(NSURL *)url;
+- (id)initWithContentsOfFile:(NSString *)path;
+- (id)initWithData:(NSData *)data; // create the parser from data
 
 @property(nonatomic, retain) id<ExpatXMLParserDelegate> delegate;
 

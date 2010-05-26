@@ -12,7 +12,20 @@
 #import <CFNetwork/CFNetwork.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-const int buffSize = 1024;
+#define COPY_BUFFER
+
+#ifdef XML_UNICODE 
+	#ifdef COPY_BUFFER
+	 #define CREATE_CFSTRING(x) CFStringCreateWithCharacters (kCFAllocatorDefault,(UniChar*)x,UniCharStrlen(x));
+	#else
+	 #define CREATE_CFSTRING(x) CFStringCreateWithCharactersNoCopy (kCFAllocatorDefault,(UniChar*)x, UniCharStrlen(x), kCFAllocatorNull)
+	#endif
+#else
+#define CREATE_CFSTRING(x) CFStringCreateWithCStringNoCopy (kCFAllocatorDefault,(const char*)x,kCFStringEncodingUTF8,kCFAllocatorNull);
+#endif
+
+const int buffSize = 2048;
+
 const XML_Char seperator = -1;
 
 @implementation ExpatXMLParser
@@ -51,10 +64,10 @@ startElementHandler(void *ud, const XML_Char *name, const XML_Char **atts)
 	
 	// Extract names
 	if(parserobj->shouldProcessNamespaces)
-	{		
-		CFStringRef _name = CFStringCreateWithCharactersNoCopy (kCFAllocatorDefault,(UniChar*)name, UniCharStrlen(name), kCFAllocatorNull);
+	{				
+		CFStringRef _name = CREATE_CFSTRING(name); 
 		
-		temp = CFStringCreateArrayBySeparatingStrings (kCFAllocatorDefault, _name, (*)parserobj->seperator);
+		temp = CFStringCreateArrayBySeparatingStrings (kCFAllocatorDefault, _name, parserobj->seperator);
 		
 		if(CFArrayGetCount(temp) > 1) {
 			uri = CFArrayGetValueAtIndex(temp, 0);
@@ -79,16 +92,15 @@ startElementHandler(void *ud, const XML_Char *name, const XML_Char **atts)
 	}
 	else
 	{
-		elementName = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name), kCFAllocatorNull);
-	//	elementName = (id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name));
+		elementName = CREATE_CFSTRING(name);
 	}
 
 	CFDictionaryRemoveAllValues((CFMutableDictionaryRef)parserobj->dict);
 	int i;
 	for(i=0; atts[i]; i+=2) 
 	{
-		CFStringRef key = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, (UniChar*)atts[i+1], UniCharStrlen(atts[i]), kCFAllocatorNull);
-		CFStringRef value = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, (UniChar*)atts[i+1], UniCharStrlen(atts[i+1]), kCFAllocatorNull);
+		CFStringRef key = CREATE_CFSTRING(atts[i]); 
+		CFStringRef value = CREATE_CFSTRING(atts[i+1]); 
 
 		CFDictionaryAddValue ((CFMutableDictionaryRef)parserobj->dict,
 							  (id)key,
@@ -98,14 +110,14 @@ startElementHandler(void *ud, const XML_Char *name, const XML_Char **atts)
 		CFRelease(key);
 		CFRelease(value);
 	}
-			
+				
 	if (parserobj->buffer) {
-		[parserobj->delegate parser:parserobj foundCharacters:(NSString*)[(id)parserobj->buffer autorelease]];
-		parserobj->buffer = nil;
+		[parserobj->delegate parser:parserobj foundCharacters:(NSString*)parserobj->buffer];
+		CFRelease(parserobj->buffer);
 	}
-	
-	parserobj->buffer = CFStringCreateMutable(kCFAllocatorDefault, 0);
-	
+
+	parserobj->buffer = nil;
+		
 	[parserobj->delegate parser:parserobj
 				 didStartElement:(NSString*)elementName
 					namespaceURI:(NSString*)uri
@@ -116,7 +128,6 @@ startElementHandler(void *ud, const XML_Char *name, const XML_Char **atts)
 	if (qualifiedName) CFRelease(qualifiedName);
 	if (elementName) CFRelease(elementName);
 	if (uri) CFRelease(uri);
-
 }
 
 // Called when an element (tag) ends
@@ -124,13 +135,12 @@ static void XMLCALL
 endElementHandler(void *ud, const XML_Char *name)
 {
 	ExpatXMLParser * parserobj = (id)ud;
+		
+	if (parserobj->buffer)
+		[parserobj->delegate parser:parserobj foundCharacters:(NSString*)(id)parserobj->buffer];
 	
-	CFStringRef elementName = CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name), kCFAllocatorNull);
+	CFStringRef elementName = CREATE_CFSTRING(name);  
 
-	//NSString * elementName = (id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)name, UniCharStrlen(name));
-	
-	[parserobj->delegate parser:parserobj foundCharacters:(NSString*)(id)parserobj->buffer];
-	 
 	[parserobj->delegate parser:parserobj
 				   didEndElement:(NSString*)elementName
 				    namespaceURI:nil
@@ -155,7 +165,14 @@ characterDataHandler(void *ud, const XML_Char *s, int len)
 			parserobj->buffer = CFStringCreateMutable(kCFAllocatorDefault, 0);
 		}
 		
+	#ifdef XML_UNICODE 
 		CFStringAppendCharacters ((CFMutableStringRef)parserobj->buffer, (UniChar*)s, len);
+	#else
+		CFStringRef string = CFStringCreateWithBytesNoCopy (kCFAllocatorDefault, (UInt8*)s, len, kCFStringEncodingUTF8, false, kCFAllocatorNull);
+		CFStringAppend((CFMutableStringRef)parserobj->buffer, string);	
+		CFRelease(string);
+	#endif
+		
 	}
 }
 
@@ -163,45 +180,80 @@ characterDataHandler(void *ud, const XML_Char *s, int len)
 static void XMLCALL
 commentHandler(void *ud, const XML_Char *data)
 {
-	NSString *_comment = (data == NULL) ? nil : [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)data, UniCharStrlen(data)) autorelease];
+	CFStringRef _comment = nil;
 	
+	if (data) 
+		_comment = CREATE_CFSTRING(data);
+ 	
 	ExpatXMLParser * parserobj = (id)ud;
-	[parserobj->delegate parser:parserobj foundComment:_comment];
+	[parserobj->delegate parser:parserobj foundComment:(id)_comment];
+	
+	if (_comment) CFRelease(_comment);
 }
 
 // Called when a namespace is declared
 static void XMLCALL
 startNamespaceDeclHandler(void *ud, const XML_Char *prefix, const XML_Char *uri)
 {
-	NSString *_prefix = (prefix == NULL) ? @"" : [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)prefix, UniCharStrlen(prefix)) autorelease];
-	NSString *_uri = (uri == NULL) ? nil : [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)uri, UniCharStrlen(uri)) autorelease];
+	CFStringRef _prefix = nil;
+	if (prefix) _prefix= CREATE_CFSTRING(prefix);
 	
+	CFStringRef _uri = nil;
+	if (uri) _uri= CREATE_CFSTRING(uri);
+
 	ExpatXMLParser * parserobj = (id)ud;
-	[parserobj->delegate parser:parserobj didStartMappingPrefix:_prefix toURI:_uri];
+	[parserobj->delegate parser:parserobj didStartMappingPrefix:(id)_prefix toURI:(id)_uri];
+	
+	if (_uri) CFRelease(_uri);
+	if (_prefix) CFRelease(_prefix);
 }
 
 // Called when a namespace declaration ends (falls out of scope)
 static void XMLCALL
 endNamespaceDeclHandler(void *ud, const XML_Char *prefix)
 {
-	NSString *_prefix = (prefix == NULL) ? @"" : [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)prefix, UniCharStrlen(prefix)) autorelease];
-	
+	CFStringRef _prefix = nil;
+	if (prefix) _prefix= CREATE_CFSTRING(prefix);
+
 	ExpatXMLParser * parserobj = (id)ud;
-	[parserobj->delegate parser:parserobj didEndMappingPrefix:_prefix];
+	[parserobj->delegate parser:parserobj didEndMappingPrefix:(id)_prefix];
+	
+	if (_prefix) CFRelease(_prefix);
 }
 
 static void XMLCALL
 processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *data)
 {
-	NSString *_target = (target == NULL) ? nil : [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)target, UniCharStrlen(target)) autorelease];
-	NSString *_data = (data == NULL) ? nil : [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, (UniChar*)data, UniCharStrlen(data)) autorelease];
+	CFStringRef _target = nil;
+	if (target) _target = CREATE_CFSTRING(target);
+	
+	CFStringRef _data = nil;
+	if (data) _data = CREATE_CFSTRING(data);
 	
 	ExpatXMLParser * parserobj = (id)ud;
-	[parserobj->delegate parser:parserobj foundProcessingInstructionWithTarget:_target data:_data];
+	[parserobj->delegate parser:parserobj foundProcessingInstructionWithTarget:(id)_target data:(id)_data];
+	
+	if (_target) CFRelease(_target);
+	if (_data) CFRelease(_data);
 }
 
-// OBJECTIVE-C METHODS
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+- (id)initWithData:(NSData *)fdata // create the parser from dat
+{
+	if (self = [super init]) {
+		data = [fdata retain];
+		_isDataParse = YES;
+	}
+	
+	return self;
+}
+
+- (id)initWithContentsOfFile:(NSString *)path 
+{
+	if (self = [super init]) {
+		url = [[NSURL alloc] initFileURLWithPath:path];
+	}
+	return self;
+}
 
 - (id)initWithContentsOfURL:(NSURL *)furl
 {
@@ -214,12 +266,17 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 
 -(void)dealloc
 {
+	
+	if (buffer) 
+		CFRelease(buffer);
+	
 	if (parser) {
 		XML_ParserFree(parser);
 	}
 	
 	CFRelease(dict);
 	CFRelease(seperator);
+	[data release];
 	[delegate release];
 	[url release];
 	[error release];
@@ -258,21 +315,23 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 
 - (void)errorHandler:(int)errorCode
 {
+	NSLog(@"Caught Error");
+	
 	if([delegate respondsToSelector:@selector(parser:parseErrorOccurred:)])
 	{
 		NSString *domain = @"ExpatXMLParserDomain";
 		UniChar * errorc = (UniChar*)XML_ErrorString(errorCode);
-		NSString *errorStr = [(id)CFStringCreateWithCharacters(kCFAllocatorDefault, errorc, UniCharStrlen(errorc)) autorelease];
+		CFStringRef errorStr = CREATE_CFSTRING(errorc);
 		
-		NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:errorStr forKey:NSLocalizedDescriptionKey];
+		NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:(id)errorStr forKey:NSLocalizedDescriptionKey];
 		
 		error = [[NSError alloc] initWithDomain:domain code:errorCode userInfo:errorInfo];
+		
+		if (errorStr) CFRelease(errorStr);
 		
 		[delegate parser:self parseErrorOccurred:error];
 	}
 }
-
-
 
 - (BOOL)parse
 {	
@@ -329,35 +388,49 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 	
 	BOOL responseProcessed = NO;
 	BOOL gzipEncoded = NO;
+	BOOL isHTTP = NO;
 
-	CFHTTPMessageRef myRequest = CFHTTPMessageCreateRequest(kCFAllocatorDefault, (const CFStringRef)@"GET", (const CFURLRef)url, kCFHTTPVersion1_1);
+	CFReadStreamRef inputStream;
 	
-	CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"Accept-Encoding", (CFStringRef) @"gzip");	
-	CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"User-Agent", (CFStringRef) @"expat-xml-parser");	
+	if (_isDataParse) { //Read from data
+		inputStream =  CFReadStreamCreateWithBytesNoCopy(kCFAllocatorDefault, [data bytes], [data length], kCFAllocatorNull);
+	} else if ([url isFileURL]) { //Read from file
+		inputStream = CFReadStreamCreateWithFile(kCFAllocatorDefault, (const CFURLRef)url);
+	} else { //Presume it's http
+		
+		isHTTP = YES;
+		
+		CFHTTPMessageRef myRequest = CFHTTPMessageCreateRequest(kCFAllocatorDefault, (const CFStringRef)@"GET", (const CFURLRef)url, kCFHTTPVersion1_1);
+		
+		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"Accept-Encoding", (CFStringRef) @"gzip");	
+		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"User-Agent", (CFStringRef) @"expat-xml-parser");	
 
-	CFReadStreamRef httpStream = CFReadStreamCreateForHTTPRequest (kCFAllocatorDefault, myRequest);
-	CFReadStreamSetProperty(httpStream, kCFStreamPropertyHTTPShouldAutoredirect, kCFBooleanTrue);	
-	CFReadStreamSetProperty(httpStream, kCFStreamPropertyHTTPAttemptPersistentConnection, kCFBooleanTrue);	
+		inputStream = CFReadStreamCreateForHTTPRequest (kCFAllocatorDefault, myRequest);
+		CFReadStreamSetProperty(inputStream, kCFStreamPropertyHTTPShouldAutoredirect, kCFBooleanTrue);	
+		CFReadStreamSetProperty(inputStream, kCFStreamPropertyHTTPAttemptPersistentConnection, kCFBooleanTrue);	
 
-	CFMutableDictionaryRef  sslSettings;
-	CFDictionaryRef proxySettings;
-	
-	//Setup the proxy settings
-	if((proxySettings = CFNetworkCopySystemProxySettings())) {
-		CFReadStreamSetProperty(httpStream, kCFStreamPropertyHTTPProxy, (proxySettings));
-		CFRelease(proxySettings);
+		CFMutableDictionaryRef  sslSettings;
+		CFDictionaryRef proxySettings;
+		
+		//Setup the proxy settings
+		if((proxySettings = CFNetworkCopySystemProxySettings())) {
+			CFReadStreamSetProperty(inputStream, kCFStreamPropertyHTTPProxy, (proxySettings));
+			CFRelease(proxySettings);
+		}
+		
+		//Setup SSL to not validate
+		if([[url scheme] isEqualToString:@"https"]) {
+			sslSettings = CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+			CFDictionarySetValue(sslSettings, kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
+			CFReadStreamSetProperty(inputStream, kCFStreamPropertySSLSettings, sslSettings); //kCFStreamSSLCertificates
+			CFRelease(sslSettings);
+		}
+		
+		CFRelease(myRequest);
 	}
 	
-	//Setup SSL to not validate
-	if([[url scheme] isEqualToString:@"https"]) {
-		sslSettings = CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-		CFDictionarySetValue(sslSettings, kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
-		CFReadStreamSetProperty(httpStream, kCFStreamPropertySSLSettings, sslSettings); //kCFStreamSSLCertificates
-		CFRelease(sslSettings);
-	}
-	
-	if (CFReadStreamOpen(httpStream) == NO) {
-		CFErrorRef ferror = CFReadStreamCopyError(httpStream);
+	if (CFReadStreamOpen(inputStream) == NO) {
+		CFErrorRef ferror = CFReadStreamCopyError(inputStream);
 		if([delegate respondsToSelector:@selector(parser:parseErrorOccurred:)])
 			[delegate parser:self parseErrorOccurred:(NSError *)ferror];
 		CFRelease(ferror);
@@ -372,10 +445,10 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 
 		while (true) {
 				//Read in the data from the CFStream
-				CFIndex result = CFReadStreamRead (httpStream, (UInt8*)in, buffSize);
+				CFIndex result = CFReadStreamRead (inputStream, (UInt8*)in, buffSize);
 				
 				if (!responseProcessed) {
-					CFHTTPMessageRef msgRespuesta = (CFHTTPMessageRef) CFReadStreamCopyProperty(httpStream, kCFStreamPropertyHTTPResponseHeader);
+					CFHTTPMessageRef msgRespuesta =(CFHTTPMessageRef) CFReadStreamCopyProperty(inputStream, kCFStreamPropertyHTTPResponseHeader);
 					if (msgRespuesta) {
 						NSString * encodingdd = (NSString*)CFHTTPMessageCopyHeaderFieldValue (msgRespuesta, (CFStringRef) @"Content-Encoding");
 						if (encodingdd) {
@@ -413,7 +486,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 				if (result == 0) {
 					break;
 				} else if (result <= -1) {
-					CFErrorRef ferror = CFReadStreamCopyError(httpStream);
+					CFErrorRef ferror = CFReadStreamCopyError(inputStream);
 					if([delegate respondsToSelector:@selector(parser:parseErrorOccurred:)]) {
 						[delegate parser:self parseErrorOccurred:(NSError *)ferror];
 					}
@@ -463,9 +536,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 							
 						} while (strm.avail_out == 0);
 					} else {
-						NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 						XML_Parse(parser, (const char*)in, result, NO);
-						[pool drain];
 					}
 
 				}
@@ -477,9 +548,8 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		
 	}
 	
-	CFReadStreamClose(httpStream);
-	CFRelease(httpStream);
-	CFRelease(myRequest);
+	CFReadStreamClose(inputStream);
+	CFRelease(inputStream);
 	XML_ParserFree(parser);
 	parser = nil;
 
