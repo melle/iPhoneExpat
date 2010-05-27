@@ -274,8 +274,10 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		XML_ParserFree(parser);
 	}
 	
-	CFRelease(dict);
-	CFRelease(seperator);
+	if (dict) CFRelease(dict);
+	
+	if (seperator) CFRelease(seperator);
+	
 	[data release];
 	[delegate release];
 	[url release];
@@ -405,6 +407,14 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"Accept-Encoding", (CFStringRef) @"gzip");	
 		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"User-Agent", (CFStringRef) @"expat-xml-parser");	
 
+		//Setup Cookies
+		NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:url];
+		NSDictionary *headerFields = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
+		NSString *cookieHeader = [headerFields objectForKey:@"Cookie"]; // key used in header dictionary
+		if (cookieHeader) {
+			CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"Cookie", (CFStringRef) cookieHeader);				
+		}
+		
 		inputStream = CFReadStreamCreateForHTTPRequest (kCFAllocatorDefault, myRequest);
 		CFReadStreamSetProperty(inputStream, kCFStreamPropertyHTTPShouldAutoredirect, kCFBooleanTrue);	
 		CFReadStreamSetProperty(inputStream, kCFStreamPropertyHTTPAttemptPersistentConnection, kCFBooleanTrue);	
@@ -413,7 +423,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		CFDictionaryRef proxySettings;
 		
 		//Setup the proxy settings
-		if((proxySettings = CFNetworkCopySystemProxySettings())) {
+		if((proxySettings = CFNetworkCopySystemProxySettings())) {			
 			CFReadStreamSetProperty(inputStream, kCFStreamPropertyHTTPProxy, (proxySettings));
 			CFRelease(proxySettings);
 		}
