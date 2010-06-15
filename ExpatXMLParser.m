@@ -12,7 +12,7 @@
 #import <CFNetwork/CFNetwork.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-#define COPY_BUFFER
+//#define COPY_BUFFER
 
 #ifdef XML_UNICODE 
 	#ifdef COPY_BUFFER
@@ -24,21 +24,14 @@
 #define CREATE_CFSTRING(x) CFStringCreateWithCStringNoCopy (kCFAllocatorDefault,(const char*)x,kCFStringEncodingUTF8,kCFAllocatorNull);
 #endif
 
-const int buffSize = 2048;
+const int buffSize = 1048;
 
 const XML_Char seperator = -1;
 
 @implementation ExpatXMLParser
 
 @synthesize delegate;
-
-// WRAPPER METHODS
-//
-// Wrapper functions that are used by Expat.  These are the "real"
-// Expat handlers, and they receive the id of the object instance that
-// is performing the parsing as their user data argument so they know
-// where to send messages.
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+@synthesize userAgent;
 
 static inline int UniCharStrlen (const XML_Char * in) {
 
@@ -258,7 +251,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 - (id)initWithContentsOfURL:(NSURL *)furl
 {
 	if (self = [super init]) {
-		url = [[NSURL alloc] initWithString:[furl absoluteString]];
+		url = [furl retain];
 		parser = nil;
 	}
 	return self;
@@ -278,6 +271,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 	
 	if (seperator) CFRelease(seperator);
 	
+	[userAgent release];
 	[data release];
 	[delegate release];
 	[url release];
@@ -333,6 +327,13 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		
 		[delegate parser:self parseErrorOccurred:error];
 	}
+}
+
+-(NSString*)userAgent {
+	if (userAgent == nil)
+		return @"iphone-expat-xmlparser (benreeves.co.uk)";
+	else
+		return userAgent;
 }
 
 - (BOOL)parse
@@ -405,7 +406,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		CFHTTPMessageRef myRequest = CFHTTPMessageCreateRequest(kCFAllocatorDefault, (const CFStringRef)@"GET", (const CFURLRef)url, kCFHTTPVersion1_1);
 		
 		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"Accept-Encoding", (CFStringRef) @"gzip");	
-		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"User-Agent", (CFStringRef) @"expat-xml-parser");	
+		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"User-Agent", (CFStringRef) userAgent);	
 
 		//Setup Cookies
 		NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:url];

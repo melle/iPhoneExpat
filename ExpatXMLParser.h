@@ -38,6 +38,7 @@
 	NSError *error;
 	CFStringRef seperator;
 	NSData * data;
+	NSString * userAgent;
 }
 
 - (id)initWithContentsOfURL:(NSURL *)url;
@@ -45,6 +46,7 @@
 - (id)initWithData:(NSData *)data; // create the parser from data
 
 @property(nonatomic, retain) id<ExpatXMLParserDelegate> delegate;
+@property(nonatomic, retain) NSString * userAgent;
 
 - (void)setShouldProcessNamespaces:(BOOL)shouldProcessNamespaces;
 - (BOOL)shouldProcessNamespaces;
