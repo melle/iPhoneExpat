@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <zlib.h>
 #import "expat.h"
+#import <CFNetwork/CFNetwork.h>
 
 @class ExpatXMLParser;
 
@@ -16,6 +17,7 @@
 - (void)parser:(ExpatXMLParser*)parser foundProcessingInstructionWithTarget:(NSString *)target data:(NSString *)data;
 - (void)parser:(ExpatXMLParser*)parser parseErrorOccurred:(NSError *)parseError;
 - (BOOL)parser:(ExpatXMLParser*)parser shouldProcessAttributesForElement:(NSString *)elementName;
+- (void)parser:(ExpatXMLParser*)parser shouldBeginHTTPRequest:(CFHTTPMessageRef)httpMessage;
 
 @required
 - (void)parser:(ExpatXMLParser*)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName attributes:(NSDictionary *)attributeDict;

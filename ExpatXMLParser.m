@@ -408,6 +408,10 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"Accept-Encoding", (CFStringRef) @"gzip");	
 		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"User-Agent", (CFStringRef) userAgent);	
 
+		if ([delegate respondsToSelector:@selector(parser:shouldBeginHTTPRequest:)]) {
+			[delegate parser:self shouldBeginHTTPRequest:myRequest];
+		}
+		
 		//Setup Cookies
 		NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:url];
 		NSDictionary *headerFields = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
