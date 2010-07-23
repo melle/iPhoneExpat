@@ -231,6 +231,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -279,7 +281,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>30</integer>
 									<integer>28</integer>
 									<integer>0</integer>
 								</array>
@@ -313,14 +314,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>9FFF041411A81A5B00F1799C</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ExpatXMLParser.m</string>
+								<string>xmltok.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -328,11 +327,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>9FFF041511A81A5B00F1799C</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ExpatXMLParser.m</string>
+										<string>xmltok.c</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>9FBD622B11D4DAB900A01ECC</string>
+										<string>9FBD627F11D4DD6E00A01ECC</string>
 										<key>history</key>
 										<array>
 											<string>9FFF044D11A81B8900F1799C</string>
@@ -373,10 +372,11 @@
 											<string>9F5CFD6511AD5E2600FA9C9D</string>
 											<string>9F5CFD6611AD5E2600FA9C9D</string>
 											<string>9F7BCC8711ADDA9400518A65</string>
-											<string>9F7BDC9E11B164B300518A65</string>
 											<string>9F5C6CC911B85A0D00024ECB</string>
-											<string>9FBD622911D4DAB900A01ECC</string>
-											<string>9FBD622A11D4DAB900A01ECC</string>
+											<string>9FBD627B11D4DD6E00A01ECC</string>
+											<string>9FBD627C11D4DD6E00A01ECC</string>
+											<string>9FBD627D11D4DD6E00A01ECC</string>
+											<string>9FBD627E11D4DD6E00A01ECC</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>

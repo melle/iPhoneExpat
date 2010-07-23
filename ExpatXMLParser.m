@@ -533,7 +533,9 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 								case Z_MEM_ERROR:							
 									if(strm.msg && [delegate respondsToSelector:@selector(parserDidEndDocument:)]){
 										NSError * ferror = [NSError errorWithDomain:[NSString stringWithUTF8String:strm.msg] code:ret userInfo:nil];
-										[delegate parser:self parseErrorOccurred:ferror];
+										
+										if ([delegate respondsToSelector:@selector(parser:parseErrorOccurred:)]) 
+											[delegate parser:self parseErrorOccurred:ferror];
 									}
 									break;
 								case Z_STREAM_END:
