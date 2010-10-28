@@ -73,7 +73,7 @@
 		printf("Time Taken to Reach first element %f\n", firstElementTime-start);
 		printf("Total time %f\n", end-start);
 		
-		urlString = [urlString stringByAppendingFormat:@"?=%d", arc4random()];`
+		urlString = [urlString stringByAppendingFormat:@"?=%d", arc4random()];
 
 		NSLog(@"opened %d -- closed %d", opened, closed);
 	}
