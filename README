@@ -1,0 +1,131 @@
+Comparison vs NSXMLParser
+
+2010-10-28 11:00:52.012 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.202998
+Total time 0.365997
+2010-10-28 11:00:52.421 iPhoneExpatTest[10309:207] opened 5403 -- closed 5403
+2010-10-28 11:00:52.423 iPhoneExpatTest[10309:207] http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topalbums/sf=143441/limit=300/explicit=true/xml?=-1716442565
+2010-10-28 11:00:52.425 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 8.135464
+Total time 8.235920
+2010-10-28 11:01:00.663 iPhoneExpatTest[10309:207] opened 5403 -- closed 5403
+2010-10-28 11:01:00.664 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.065101
+Total time 0.206502
+2010-10-28 11:01:00.871 iPhoneExpatTest[10309:207] opened 5403 -- closed 5403
+2010-10-28 11:01:00.872 iPhoneExpatTest[10309:207] http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topalbums/sf=143441/limit=300/explicit=true/xml?=-611190626
+2010-10-28 11:01:00.872 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 7.524887
+Total time 7.609960
+2010-10-28 11:01:08.483 iPhoneExpatTest[10309:207] opened 5403 -- closed 5403
+2010-10-28 11:01:08.483 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.114885
+Total time 0.121618
+2010-10-28 11:01:08.605 iPhoneExpatTest[10309:207] opened 64 -- closed 64
+2010-10-28 11:01:08.606 iPhoneExpatTest[10309:207] http://feeds.feedburner.com/DilbertDailyStrip?=1263366870
+2010-10-28 11:01:08.606 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.131637
+Total time 0.132106
+2010-10-28 11:01:08.739 iPhoneExpatTest[10309:207] opened 64 -- closed 64
+2010-10-28 11:01:08.740 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.261474
+Total time 0.532746
+2010-10-28 11:01:09.273 iPhoneExpatTest[10309:207] opened 488 -- closed 488
+2010-10-28 11:01:09.273 iPhoneExpatTest[10309:207] http://designsponge.blogspot.com/atom.xml?=1873331978
+2010-10-28 11:01:09.274 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.521247
+Total time 0.524886
+2010-10-28 11:01:09.800 iPhoneExpatTest[10309:207] opened 488 -- closed 488
+2010-10-28 11:01:09.800 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.343452
+Total time 1.187216
+2010-10-28 11:01:10.988 iPhoneExpatTest[10309:207] opened 1187 -- closed 1187
+2010-10-28 11:01:10.989 iPhoneExpatTest[10309:207] http://www.slate.com/rss/?=-1183612197
+2010-10-28 11:01:10.990 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.637955
+Total time 0.653299
+2010-10-28 11:01:11.644 iPhoneExpatTest[10309:207] opened 1187 -- closed 1187
+2010-10-28 11:01:11.644 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.191436
+Total time 0.294819
+2010-10-28 11:01:11.940 iPhoneExpatTest[10309:207] opened 126 -- closed 126
+2010-10-28 11:01:11.941 iPhoneExpatTest[10309:207] http://rssfeeds.usatoday.com/UsatodaycomBooks-TopStories?=464129530
+2010-10-28 11:01:11.941 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.312796
+Total time 0.313735
+2010-10-28 11:01:12.257 iPhoneExpatTest[10309:207] opened 126 -- closed 126
+2010-10-28 11:01:12.257 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.456765
+Total time 0.722828
+2010-10-28 11:01:12.981 iPhoneExpatTest[10309:207] opened 435 -- closed 435
+2010-10-28 11:01:12.982 iPhoneExpatTest[10309:207] http://googleblog.blogspot.com/atom.xml?=-1206143596
+2010-10-28 11:01:12.983 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.611372
+Total time 0.617266
+2010-10-28 11:01:13.601 iPhoneExpatTest[10309:207] opened 375 -- closed 375
+2010-10-28 11:01:13.601 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.511141
+Total time 0.694218
+2010-10-28 11:01:14.296 iPhoneExpatTest[10309:207] opened 276 -- closed 276
+2010-10-28 11:01:14.297 iPhoneExpatTest[10309:207] http://api.flickr.com/services/feeds/groups_pool.gne?id=61057342@N00&lang=en-us&format=rss_200?=-19313436
+2010-10-28 11:01:14.298 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 1.319075
+Total time 1.321641
+2010-10-28 11:01:15.620 iPhoneExpatTest[10309:207] opened 357 -- closed 357
+2010-10-28 11:01:15.621 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.654062
+Total time 0.684547
+2010-10-28 11:01:16.306 iPhoneExpatTest[10309:207] opened 548 -- closed 548
+2010-10-28 11:01:16.306 iPhoneExpatTest[10309:207] http://phobos.apple.com/WebObjects/MZStore.woa/wpa/MRSS/topsongs/limit=25/rss.xml?=-2090409327
+2010-10-28 11:01:16.307 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.716861
+Total time 0.721056
+2010-10-28 11:01:17.029 iPhoneExpatTest[10309:207] opened 548 -- closed 548
+2010-10-28 11:01:17.029 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.617736
+Total time 0.618042
+2010-10-28 11:01:17.648 iPhoneExpatTest[10309:207] opened 8 -- closed 5
+2010-10-28 11:01:17.649 iPhoneExpatTest[10309:207] http://www.readwriteweb.com/rss.xml?=-1733693477
+2010-10-28 11:01:17.649 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+2010-10-28 11:01:18.306 iPhoneExpatTest[10309:207] Error Domain=NSXMLParserErrorDomain Code=5 "The operation couldn’t be completed. (NSXMLParserErrorDomain error 5.)"
+Time Taken to Reach first element -0.002757
+Total time 0.656334
+2010-10-28 11:01:18.306 iPhoneExpatTest[10309:207] opened 0 -- closed 0
+2010-10-28 11:01:18.307 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.190554
+Total time 0.285082
+2010-10-28 11:01:18.593 iPhoneExpatTest[10309:207] opened 126 -- closed 126
+2010-10-28 11:01:18.594 iPhoneExpatTest[10309:207] http://rssfeeds.usatoday.com/UsatodaycomNation-TopStories?=2070826274
+2010-10-28 11:01:18.594 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.146965
+Total time 0.148304
+2010-10-28 11:01:18.743 iPhoneExpatTest[10309:207] opened 126 -- closed 126
+2010-10-28 11:01:18.744 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.861050
+Total time 0.861358
+2010-10-28 11:01:19.606 iPhoneExpatTest[10309:207] opened 23 -- closed 23
+2010-10-28 11:01:19.607 iPhoneExpatTest[10309:207] http://dictionary.reference.com/wordoftheday/wotd.rss?=804706192
+2010-10-28 11:01:19.607 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.230905
+Total time 0.231019
+2010-10-28 11:01:19.839 iPhoneExpatTest[10309:207] opened 23 -- closed 23
+2010-10-28 11:01:19.840 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.853837
+Total time 0.894942
+2010-10-28 11:01:20.735 iPhoneExpatTest[10309:207] opened 93 -- closed 93
+2010-10-28 11:01:20.736 iPhoneExpatTest[10309:207] http://www.quotationspage.com/data/qotd.rss?=2029168742
+2010-10-28 11:01:20.737 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.404403
+Total time 0.405192
+2010-10-28 11:01:21.143 iPhoneExpatTest[10309:207] opened 93 -- closed 93
+2010-10-28 11:01:21.144 iPhoneExpatTest[10309:207] Begin Parsing Using Expat
+Time Taken to Reach first element 0.868677
+Total time 1.212270
+2010-10-28 11:01:22.357 iPhoneExpatTest[10309:207] opened 128 -- closed 128
+2010-10-28 11:01:22.358 iPhoneExpatTest[10309:207] http://sports.espn.go.com/espn/rss/news?=964183828
+2010-10-28 11:01:22.358 iPhoneExpatTest[10309:207] Begin Parsing Using NSXMLParser
+Time Taken to Reach first element 0.697842
+Total time 0.698976
+2010-10-28 11:01:23.058 iPhoneExpatTest[10309:207] opened 128 -- closed 128
+2010-10-28 11:01:23.059 iPhoneExpatTest[10309:207] time to reach the first element Expat: 6.193167 -- NSXMLParser: 21.388652
+2010-10-28 11:01:23.059 iPhoneExpatTest[10309:207] Total time for Expat: 8.682185 -- NSXMLParser: 22.269695
