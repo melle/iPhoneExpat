@@ -406,7 +406,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 		CFHTTPMessageRef myRequest = CFHTTPMessageCreateRequest(kCFAllocatorDefault, (const CFStringRef)@"GET", (const CFURLRef)url, kCFHTTPVersion1_1);
 		
 		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"Accept-Encoding", (CFStringRef) @"gzip");	
-		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"User-Agent", (CFStringRef) userAgent);	
+		CFHTTPMessageSetHeaderFieldValue(myRequest, (CFStringRef) @"User-Agent", (CFStringRef) [self userAgent]);	
 
 		if ([delegate respondsToSelector:@selector(parser:shouldBeginHTTPRequest:)]) {
 			[delegate parser:self shouldBeginHTTPRequest:myRequest];

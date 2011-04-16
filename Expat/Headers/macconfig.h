@@ -49,7 +49,7 @@
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
 
-#define XML_UNICODE
+//#define XML_UNICODE
 //#define XML_UNICODE_WCHAR_T
 
 #endif /* ifndef MACCONFIG_H */
