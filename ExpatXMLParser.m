@@ -161,9 +161,19 @@ characterDataHandler(void *ud, const XML_Char *s, int len)
 	#ifdef XML_UNICODE 
 		CFStringAppendCharacters ((CFMutableStringRef)parserobj->buffer, (UniChar*)s, len);
 	#else
-		CFStringRef string = CFStringCreateWithBytesNoCopy (kCFAllocatorDefault, (UInt8*)s, len, kCFStringEncodingUTF8, false, kCFAllocatorNull);
-		CFStringAppend((CFMutableStringRef)parserobj->buffer, string);	
-		CFRelease(string);
+		//Hack because CFStringAppendCString requires a null terminated string
+		XML_Char * end_of_buffer = (XML_Char*)s+len;
+		XML_Char o = *end_of_buffer;
+		
+		*end_of_buffer = '\0';
+		
+		CFStringAppendCString((CFMutableStringRef)parserobj->buffer, (const char *)s, kCFStringEncodingUTF8);
+		
+		*end_of_buffer = o;
+
+		//CFStringRef string = CFStringCreateWithBytesNoCopy (kCFAllocatorDefault, (UInt8*)s, len, kCFStringEncodingUTF8, false, kCFAllocatorNull);
+		//CFStringAppend((CFMutableStringRef)parserobj->buffer, string);	
+		//CFRelease(string);
 	#endif
 		
 	}
@@ -317,13 +327,11 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 	{
 		NSString *domain = @"ExpatXMLParserDomain";
 		UniChar * errorc = (UniChar*)XML_ErrorString(errorCode);
-		CFStringRef errorStr = CREATE_CFSTRING(errorc);
 		
-		NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:(id)errorStr forKey:NSLocalizedDescriptionKey];
+		NSDictionary *errorInfo = [NSDictionary dictionaryWithObject:[NSString stringWithUTF8String:(const char*)errorc] forKey:NSLocalizedDescriptionKey];
 		
 		error = [[NSError alloc] initWithDomain:domain code:errorCode userInfo:errorInfo];
 		
-		if (errorStr) CFRelease(errorStr);
 		
 		[delegate parser:self parseErrorOccurred:error];
 	}
