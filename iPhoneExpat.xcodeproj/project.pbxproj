@@ -270,7 +270,11 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "iPhoneExpat" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* iPhoneExpat */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
@@ -334,6 +338,7 @@
 				GCC_PREFIX_HEADER = iPhoneExpat_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = iPhoneExpat;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -348,6 +353,7 @@
 				GCC_PREFIX_HEADER = iPhoneExpat_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = iPhoneExpat;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -399,7 +405,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = iPhoneExpatTest;
-				SDKROOT = iphoneos4.0;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -423,7 +429,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = iPhoneExpatTest;
-				SDKROOT = iphoneos4.0;
+				SDKROOT = iphoneos;
 				ZERO_LINK = NO;
 			};
 			name = Release;

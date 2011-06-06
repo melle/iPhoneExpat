@@ -242,7 +242,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 
 - (id)initWithData:(NSData *)fdata // create the parser from dat
 {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		data = [fdata retain];
 		_isDataParse = YES;
 	}
@@ -252,7 +252,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 
 - (id)initWithContentsOfFile:(NSString *)path 
 {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		url = [[NSURL alloc] initFileURLWithPath:path];
 	}
 	return self;
@@ -260,7 +260,7 @@ processingInstructionHandler(void *ud, const XML_Char *target, const XML_Char *d
 
 - (id)initWithContentsOfURL:(NSURL *)furl
 {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		url = [furl retain];
 		parser = nil;
 	}
